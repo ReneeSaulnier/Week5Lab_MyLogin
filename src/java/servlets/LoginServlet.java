@@ -26,39 +26,51 @@ public class LoginServlet extends HttpServlet {
         
        HttpSession session = request.getSession(); 
        String action = request.getParameter("logout");
+       User user = (User) session.getAttribute("user");
        
-       if(action != null && action.equals("logout")){
+       if(action != null){
            session.invalidate();
            request.setAttribute("errorMessage", "You have logged out");
            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-
-       }   
-        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+       } else if(user != null){
+           response.sendRedirect("home");
+       } else{
+           getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+       }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        
+        HttpSession session = request.getSession();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
         
         if(username == null || password == null || username.equals("") || password.equals("")){
             request.setAttribute("errorMessage", "Please enter your credientials");
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
             
-        HttpSession session = request.getSession();
         User user = new AccountService().login(username, password);
-       
-
-        if(user != null){
-            session = request.getSession();
+        
+        if(user == null){
+            request.setAttribute("errorMessage", "Please enter your credientials");
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            
+        }else{
             session.setAttribute("user", user);
             response.sendRedirect("home");
-        } 
-//        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);   
+        }
     }
+       
+
+//        if(user != null){
+//            session = request.getSession();
+//            session.setAttribute("user", user);
+//            response.sendRedirect("home");
+//        } 
+////        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);   
+//    }
 
    } 
 }

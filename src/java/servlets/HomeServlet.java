@@ -31,7 +31,7 @@ public class HomeServlet extends HttpServlet {
         if(user != null){
            getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
         }else{
-            response.sendRedirect("login");
+            response.sendRedirect("login"); 
         }
     }
 
