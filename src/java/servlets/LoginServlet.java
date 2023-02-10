@@ -26,24 +26,23 @@ public class LoginServlet extends HttpServlet {
         
        HttpSession session = request.getSession(); 
        String action = request.getParameter("logout");
-       User user = (User) session.getAttribute("user");
+       User user = (User)session.getAttribute("user");
        
        if(action != null){
            session.invalidate();
-           request.setAttribute("errorMessage", "You have logged out");
            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-       } else if(user != null){
+       }else if (user != null){
            response.sendRedirect("home");
-       } else{
-           getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+           return;
        }
+       getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        HttpSession session = request.getSession();
+        
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         
@@ -51,26 +50,19 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Please enter your credientials");
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
             
+        
+    }
         User user = new AccountService().login(username, password);
         
-        if(user == null){
-            request.setAttribute("errorMessage", "Please enter your credientials");
-            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        if(user != null){
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+             response.sendRedirect("home");
             
         }else{
-            session.setAttribute("user", user);
-            response.sendRedirect("home");
+            request.setAttribute("user", user);
+            request.setAttribute("errorMessage", "Failed authentication");
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
         }
-    }
-       
-
-//        if(user != null){
-//            session = request.getSession();
-//            session.setAttribute("user", user);
-//            response.sendRedirect("home");
-//        } 
-////        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);   
-//    }
-
    } 
 }

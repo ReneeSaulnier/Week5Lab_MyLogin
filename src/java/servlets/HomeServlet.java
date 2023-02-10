@@ -22,16 +22,16 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // Starting a new Session 
-        HttpSession session = request.getSession();
-        
+
+        HttpSession session = request.getSession();   
         User user = (User) session.getAttribute("user");
         
-        if(user != null){
-           getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
-        }else{
+        if(user == null){
             response.sendRedirect("login"); 
+        }else{
+            request.setAttribute("user", user);
+           getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
+            
         }
     }
 

@@ -22,7 +22,7 @@ public class AccountService {
         String barb = "barb";
         String passwords = "password";
         
-        if((username.equals(abe) || username.equals(barb)) && passwords.equals(passwords)){
+        if((username.equals(abe) || username.equals(barb)) && passwords.equals(password)){
             User user = new User(username, password);
             user.setPassword(null);
             return user;
